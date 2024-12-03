@@ -3,9 +3,8 @@ import {
 	StyleSheet,
 	View,
 	Text,
-	Button,
-	ImageBackground,
 	TouchableOpacity,
+	ImageBackground,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
@@ -22,14 +21,19 @@ const Start = ({ navigation }) => {
 				style={styles.background}
 			>
 				<View style={styles.contentContainer}>
-					<Text style={styles.title}>Welcome to KatLine</Text>
+					{/* App Title */}
+					<Text style={styles.title}>KatLine</Text>
+
+					{/* Input for User's Name */}
 					<TextInput
 						style={styles.textInput}
 						value={name}
 						onChangeText={setName}
-						placeholder="Enter your username"
-						placeholderTextColor="#eee"
+						placeholder="Your Name"
+						placeholderTextColor="#757083"
 					/>
+
+					{/* Background Color Options */}
 					<Text style={styles.backgroundText}>
 						Choose Background Color:
 					</Text>
@@ -40,16 +44,20 @@ const Start = ({ navigation }) => {
 								style={[
 									styles.colorOption,
 									{ backgroundColor: color },
+									selectedColor === color &&
+										styles.selectedColor,
 								]}
 								onPress={() => setSelectedColor(color)}
 							/>
 						))}
 					</View>
+
+					{/* Start Chatting Button */}
 					<TouchableOpacity
 						style={styles.startButton}
 						onPress={() =>
 							navigation.navigate('Chat', {
-								name: name,
+								name,
 								color: selectedColor,
 							})
 						}
@@ -72,62 +80,71 @@ const styles = StyleSheet.create({
 	background: {
 		flex: 1,
 		resizeMode: 'cover',
-		justifyContent: 'center',
+		justifyContent: 'flex-end',
 	},
 
 	contentContainer: {
-		flex: 1,
-		justifyContent: 'center',
+		width: '88%',
+		height: '44%',
+		alignSelf: 'center',
+		backgroundColor: '#FFF',
+		opacity: 0.9,
+		padding: 20,
+		borderRadius: 10,
 		alignItems: 'center',
-		backgroundColor: 'rgba(0,0,0,0.6)',
+		justifyContent: 'space-between',
+		marginBottom: 20,
 	},
 
 	title: {
-		fontSize: 45,
+		fontSize: 40,
 		fontWeight: '600',
-		color: '#FFFFFF',
+		color: '#757083',
 		marginBottom: 20,
+		textAlign: 'center',
 	},
 
 	textInput: {
-		width: '88%',
-		padding: 15,
+		width: '100%',
+		height: 50,
 		borderWidth: 1,
-		borderColor: '#eee',
+		borderColor: '#757083',
 		borderRadius: 5,
-		marginTop: 20,
-		marginBottom: 20,
-		color: '#eee',
+		paddingHorizontal: 10,
 		fontSize: 16,
-		fontWeight: '300',
+		marginBottom: 20,
 	},
 
 	backgroundText: {
 		fontSize: 16,
 		fontWeight: '300',
-		color: '#eee',
+		color: '#757083',
 		marginBottom: 10,
 	},
 
 	colorContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		width: '80%',
-		marginBottom: 20,
+		width: '100%',
 	},
 
 	colorOption: {
-		width: 50,
-		height: 50,
-		borderRadius: 25,
-		marginHorizontal: 5,
+		width: 40,
+		height: 40,
+		borderRadius: 20,
+		borderWidth: 2,
+		borderColor: 'transparent',
+	},
+
+	selectedColor: {
+		borderColor: '#757083',
 	},
 
 	startButton: {
 		backgroundColor: '#757083',
 		borderRadius: 5,
-		padding: 15,
-		width: '88%',
+		paddingVertical: 15,
+		width: '100%',
 		alignItems: 'center',
 	},
 

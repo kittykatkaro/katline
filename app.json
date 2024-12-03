@@ -23,6 +23,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8e4d95b0-79ed-43a4-942d-b3dee602e935"
+      }
+    },
+    "owner": "kittykatkaro"
   }
 }

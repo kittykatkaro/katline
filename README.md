@@ -1,3 +1,3 @@
-## Katline - React Native Mobile Chat App
+## KatLine - React Native Mobile Chat App
 
-Katline is a React Native chat app designed for both iOS and Android.
+KatLine is a React Native chat app designed for both iOS and Android.

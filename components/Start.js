@@ -5,6 +5,7 @@ import {
 	Text,
 	TouchableOpacity,
 	ImageBackground,
+	Alert,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { getAuth, signInAnonymously } from 'firebase/auth';
@@ -16,6 +17,7 @@ const Start = ({ navigation }) => {
 	const colors = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
 	const auth = getAuth();
 
+	//
 	const signInUser = () => {
 		signInAnonymously(auth)
 			.then((result) => {

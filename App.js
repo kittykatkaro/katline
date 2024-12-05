@@ -14,17 +14,16 @@ import { getFirestore } from 'firebase/firestore';
 // Create the navigator
 const Stack = createStackNavigator();
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-	apiKey: 'AIzaSyCxBUrORBGTT5FutkwjWFkQw1end4ua1ic',
-	authDomain: 'katline-app.firebaseapp.com',
-	projectId: 'katline-app',
-	storageBucket: 'katline-app.firebasestorage.app',
-	messagingSenderId: '83599672388',
-	appId: '1:83599672388:web:b8d1fa38ae0f65abaf6811',
-};
-
 const App = () => {
+	// Your web app's Firebase configuration
+	const firebaseConfig = {
+		apiKey: 'AIzaSyCxBUrORBGTT5FutkwjWFkQw1end4ua1ic',
+		authDomain: 'katline-app.firebaseapp.com',
+		projectId: 'katline-app',
+		storageBucket: 'katline-app.firebasestorage.app',
+		messagingSenderId: '83599672388',
+		appId: '1:83599672388:web:b8d1fa38ae0f65abaf6811',
+	};
 	// Initialize Firebase
 	const app = initializeApp(firebaseConfig);
 

@@ -7,41 +7,59 @@ import {
 	KeyboardAvoidingView,
 } from 'react-native';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
+import {
+	collection,
+	orderBy,
+	addDoc,
+	onSnapshot,
+	query,
+} from 'firebase/firestore';
 
-const Chat = ({ route, navigation }) => {
-	const { name, color } = route.params;
+const Chat = ({ route, navigation, db }) => {
+	const { name, color, userID: UserID } = route.params;
+
+	console.log(name, color, UserID);
 	const [messages, setMessages] = useState([]);
+
 	// Function to send messages
-	const onSend = (newMessages = []) => {
-		setMessages((previousMessages) =>
-			GiftedChat.append(previousMessages, newMessages)
-		);
+	const onSend = (newMessages) => {
+		addDoc(collection(db, 'messages'), newMessages[0]);
 	};
 
 	useEffect(() => {
-		// Set the initial message
-		setMessages([
-			{
-				_id: 1,
-				text: 'Hello! Start Chatting!',
-				createdAt: new Date(),
-				user: {
-					_id: 2,
-					name: 'React Native',
-					avatar: 'https://placeimg.com/140/140/any',
-				},
+		navigation.setOptions({
+			title: name,
+			headerStyle: {
+				backgroundColor: '#fff',
 			},
-			{
-				_id: 2,
-				text: 'This is a system message',
-				createdAt: new Date(),
-				system: true,
+			headerTintColor: '#000',
+			headerTitleStyle: {
+				fontWeight: 'bold',
 			},
-		]);
+		});
 
-		// Set the user's name as the screen title
-		navigation.setOptions({ title: name });
-	}, [name, navigation]);
+		const q = query(
+			collection(db, 'messages'),
+			orderBy('createdAt', 'desc')
+		);
+		const unsubMessages = onSnapshot(q, (docSnapshots) => {
+			let newMessages = [];
+			docSnapshots.forEach((doc) => {
+				console.log('doc', doc.data());
+				newMessages.push({
+					id: doc.id,
+					...doc.data(),
+					createdAt: new Date(doc.data().createdAt.toMillis()),
+				});
+			});
+			setMessages(newMessages);
+		});
+
+		// Clean up code
+		return () => {
+			if (unsubMessages) unsubMessages();
+		};
+	}, []);
 
 	// Function to render the chat bubble
 	const renderBubble = (props) => {
@@ -68,7 +86,8 @@ const Chat = ({ route, navigation }) => {
 				renderBubble={renderBubble}
 				onSend={(newMessages) => onSend(newMessages)}
 				user={{
-					_id: 1,
+					_id: UserID,
+					name: name,
 				}}
 			/>
 			{Platform.OS === 'android' ? (

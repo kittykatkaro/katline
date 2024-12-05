@@ -7,12 +7,29 @@ import {
 	ImageBackground,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import { getAuth, signInAnonymously } from 'firebase/auth';
 
 const Start = ({ navigation }) => {
 	const [name, setName] = useState('');
 	const [selectedColor, setSelectedColor] = useState('');
 
 	const colors = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
+	const auth = getAuth();
+
+	const signInUser = () => {
+		signInAnonymously(auth)
+			.then((result) => {
+				navigation.navigate('Chat', {
+					name: name,
+					color: selectedColor,
+					userID: result.user.uid, // User id from Firebase
+				});
+				Alert.alert('Signed in Successfully!');
+			})
+			.catch((error) => {
+				Alert.alert('Unable to sign in, try later again.');
+			});
+	};
 
 	return (
 		<View style={styles.container}>
@@ -61,12 +78,7 @@ const Start = ({ navigation }) => {
 						accessibilityLabel="Start Chatting"
 						accessibilityHint="Navigates to the chat screen"
 						style={styles.startButton}
-						onPress={() =>
-							navigation.navigate('Chat', {
-								name,
-								color: selectedColor,
-							})
-						}
+						onPress={signInUser}
 					>
 						<Text style={styles.startButtonText}>
 							Start Chatting

@@ -6,7 +6,7 @@ import {
 	Platform,
 	KeyboardAvoidingView,
 } from 'react-native';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 
 const Chat = ({ route, navigation }) => {
 	const { name, color } = route.params;
@@ -31,17 +31,41 @@ const Chat = ({ route, navigation }) => {
 					avatar: 'https://placeimg.com/140/140/any',
 				},
 			},
+			{
+				_id: 2,
+				text: 'This is a system message',
+				createdAt: new Date(),
+				system: true,
+			},
 		]);
 
 		// Set the user's name as the screen title
 		navigation.setOptions({ title: name });
 	}, [name, navigation]);
 
+	// Function to render the chat bubble
+	const renderBubble = (props) => {
+		return (
+			<Bubble
+				{...props}
+				wrapperStyle={{
+					right: {
+						backgroundColor: '#000',
+					},
+					left: {
+						backgroundColor: '#FFF',
+					},
+				}}
+			/>
+		);
+	};
+
 	return (
 		<View style={[styles.chatContainer, { backgroundColor: color }]}>
 			{/* Render the GiftedChat component */}
 			<GiftedChat
 				messages={messages}
+				renderBubble={renderBubble}
 				onSend={(newMessages) => onSend(newMessages)}
 				user={{
 					_id: 1,

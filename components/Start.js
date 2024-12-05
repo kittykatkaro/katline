@@ -17,7 +17,7 @@ const Start = ({ navigation }) => {
 	const colors = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
 	const auth = getAuth();
 
-	//
+	// anonymous sign in
 	const signInUser = () => {
 		signInAnonymously(auth)
 			.then((result) => {

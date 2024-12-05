@@ -18,7 +18,6 @@ import {
 const Chat = ({ route, navigation, db }) => {
 	const { name, color, userID: UserID } = route.params;
 
-	console.log(name, color, UserID);
 	const [messages, setMessages] = useState([]);
 
 	// Function to send messages

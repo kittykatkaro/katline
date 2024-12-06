@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Platform, KeyboardAvoidingView } from 'react-native';
-import { Bubble, GiftedChat } from 'react-native-gifted-chat';
+import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import {
 	collection,
 	orderBy,
@@ -10,7 +10,7 @@ import {
 } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, isConnected }) => {
 	const { name, color, userID: UserID } = route.params;
 
 	const [messages, setMessages] = useState([]);
@@ -20,7 +20,9 @@ const Chat = ({ route, navigation, db }) => {
 		addDoc(collection(db, 'messages'), newMessages[0]);
 	};
 
+	let unsubMessages;
 	useEffect(() => {
+		// Set the header options
 		navigation.setOptions({
 			title: name,
 			headerStyle: {
@@ -32,29 +34,42 @@ const Chat = ({ route, navigation, db }) => {
 			},
 		});
 
-		const q = query(
-			collection(db, 'messages'),
-			orderBy('createdAt', 'desc')
-		);
-		const unsubMessages = onSnapshot(q, (docSnapshots) => {
-			let newMessages = [];
-			docSnapshots.forEach((doc) => {
-				console.log('doc', doc.data());
-				newMessages.push({
-					id: doc.id,
-					...doc.data(),
-					createdAt: new Date(doc.data().createdAt.toMillis()),
+		//Check if the user is connected to the internet
+		if (isConnected === true) {
+			if (unsubMessages) unsubMessages();
+			unsubMessages = null;
+
+			// Get the messages from Firestore
+			const q = query(
+				collection(db, 'messages'),
+				orderBy('createdAt', 'desc')
+			);
+
+			unsubMessages = onSnapshot(q, async (docSnapshots) => {
+				let newMessages = [];
+				docSnapshots.forEach((doc) => {
+					newMessages.push({
+						id: doc.id,
+						...doc.data(),
+						createdAt: new Date(doc.data().createdAt.toMillis()),
+					});
 				});
+				cacheMessages(newMessages);
+				setMessages(newMessages);
 			});
-			cacheMessages(newMessages);
-			setMessages(newMessages);
-		});
+		} else loadCachedMessages();
 
 		// Clean up code
 		return () => {
 			if (unsubMessages) unsubMessages();
 		};
 	}, []);
+
+	// Load cached messages from AsyncStorage
+	const loadCachedMessages = async () => {
+		const cachedMessages = (await AsyncStorage.getItem('messages')) || [];
+		setMessages(JSON.parse(cachedMessages));
+	};
 
 	// cache messages in AsyncStorage
 	const cacheMessages = async (newMessages) => {
@@ -85,12 +100,19 @@ const Chat = ({ route, navigation, db }) => {
 		);
 	};
 
+	// prevent the user from typing messages when offline
+	const InputToolbar = (props) => {
+		if (isConnected) return <InputToolbar {...props} />;
+		else return null;
+	};
+
 	return (
 		<View style={[styles.chatContainer, { backgroundColor: color }]}>
 			{/* Render the GiftedChat component */}
 			<GiftedChat
 				messages={messages}
 				renderBubble={renderBubble}
+				InputToolbar={InputToolbar}
 				onSend={(newMessages) => onSend(newMessages)}
 				user={{
 					_id: UserID,

@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-	StyleSheet,
-	View,
-	Text,
-	Platform,
-	KeyboardAvoidingView,
-} from 'react-native';
+import { StyleSheet, View, Platform, KeyboardAvoidingView } from 'react-native';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
 import {
 	collection,
@@ -14,6 +8,7 @@ import {
 	onSnapshot,
 	query,
 } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Chat = ({ route, navigation, db }) => {
 	const { name, color, userID: UserID } = route.params;
@@ -51,6 +46,7 @@ const Chat = ({ route, navigation, db }) => {
 					createdAt: new Date(doc.data().createdAt.toMillis()),
 				});
 			});
+			cacheMessages(newMessages);
 			setMessages(newMessages);
 		});
 
@@ -59,6 +55,18 @@ const Chat = ({ route, navigation, db }) => {
 			if (unsubMessages) unsubMessages();
 		};
 	}, []);
+
+	// cache messages in AsyncStorage
+	const cacheMessages = async (newMessages) => {
+		try {
+			AsyncStorage.setItem('messages', JSON.stringify(newMessages));
+		} catch (error) {
+			console.log(
+				'Error saving messages to AsyncStorage: ',
+				error.message
+			);
+		}
+	};
 
 	// Function to render the chat bubble
 	const renderBubble = (props) => {

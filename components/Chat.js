@@ -101,7 +101,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 	};
 
 	// prevent the user from typing messages when offline
-	const InputToolbar = (props) => {
+	const renderInputToolbar = (props) => {
 		if (isConnected) return <InputToolbar {...props} />;
 		else return null;
 	};
@@ -112,7 +112,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 			<GiftedChat
 				messages={messages}
 				renderBubble={renderBubble}
-				InputToolbar={InputToolbar}
+				renderInputToolbar={renderInputToolbar}
 				onSend={(newMessages) => onSend(newMessages)}
 				user={{
 					_id: UserID,

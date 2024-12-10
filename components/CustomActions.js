@@ -45,12 +45,6 @@ const CustomActions = ({
 		);
 	};
 
-	const generateReference = (uri) => {
-		const timeStamp = new Date().getTime();
-		const imageName = uri.split('/')[uri.split('/').length - 1];
-		return `${userID}-${timeStamp}-${imageName}`;
-	};
-
 	// get location
 	const getLocation = async () => {
 		let permissions = await Location.requestForegroundPermissionsAsync();

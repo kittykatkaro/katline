@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
 const Chat = ({ route, navigation, db, isConnected }) => {
 	const { name, color, userID: UserID } = route.params;
@@ -112,6 +113,30 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 		return <CustomActions {...props} />;
 	};
 
+	// Function to render the custom view
+	const renderCustomView = (props) => {
+		const { currentMessage } = props;
+		if (currentMessage.location) {
+			return (
+				<MapView
+					style={{
+						width: 150,
+						height: 100,
+						borderRadius: 13,
+						margin: 3,
+					}}
+					region={{
+						latitude: currentMessage.location.latitude,
+						longitude: currentMessage.location.longitude,
+						latitudeDelta: 0.0922,
+						longitudeDelta: 0.0421,
+					}}
+				/>
+			);
+		}
+		return null;
+	};
+
 	return (
 		<View style={[styles.chatContainer, { backgroundColor: color }]}>
 			{/* Render the GiftedChat component */}
@@ -120,6 +145,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 				renderBubble={renderBubble}
 				renderInputToolbar={renderInputToolbar}
 				renderActions={renderCustomActions}
+				renderCustomView={renderCustomView}
 				onSend={(newMessages) => onSend(newMessages)}
 				user={{
 					_id: UserID,

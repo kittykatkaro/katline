@@ -1,5 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 
 const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
 	const actionSheet = useActionSheet();
@@ -21,14 +23,14 @@ const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
 			async (buttonIndex) => {
 				switch (buttonIndex) {
 					case 0:
-						console.log('user wants to pick an image');
-						break;
+						pickImage();
+						return;
 					case 1:
-						console.log('user wants to take a photo');
-						break;
+						takePhoto();
+						return;
 					case 2:
-						console.log('user wants to send their location');
-						break;
+						getLocation();
+						return;
 					default:
 				}
 			}

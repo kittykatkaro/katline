@@ -2,8 +2,16 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { Timestamp } from 'firebase/firestore';
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
+const CustomActions = ({
+	wrapperStyle,
+	iconTextStyle,
+	onSend,
+	storage,
+	userID,
+}) => {
 	const actionSheet = useActionSheet();
 
 	// initialize and show the action sheet
@@ -14,6 +22,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
 			'Send Location',
 			'Cancel',
 		];
+
 		const cancelButtonIndex = options.length - 1;
 		actionSheet.showActionSheetWithOptions(
 			{
@@ -37,6 +46,12 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
 		);
 	};
 
+	const generateReference = (uri) => {
+		const timeStamp = new Date().getTime();
+		const imageName = uri.split('/')[uri.split('/').length - 1];
+		return `${userID}-${timeStamp}-${imageName}`;
+	};
+
 	// get location
 	const getLocation = async () => {
 		let permissions = await Location.requestForegroundPermissionsAsync();
@@ -53,22 +68,42 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
 		} else Alert.alert('Location permission required');
 	};
 
-	// pick image from library
+	// Function to upload an image to Firebase Storage and send its URL
+	const uploadAndSendImage = async (imageURI) => {
+		const uniqueRefString = generateReference(imageURI);
+		const newUploadRef = ref(storage, uniqueRefString);
+		const response = await fetch(imageURI);
+		// Convert the image data into a Blob
+		const blob = await response.blob();
+		uploadBytes(newUploadRef, blob).then(async (snapshot) => {
+			const imageURL = await getDownloadURL(snapshot.ref);
+			onSend({ image: imageURL });
+		});
+	};
+
+	// Function to pick an image from the device's media library
 	const pickImage = async () => {
 		let permissions =
 			await ImagePicker.requestMediaLibraryPermissionsAsync();
 		if (permissions?.granted) {
 			let result = await ImagePicker.launchImageLibraryAsync();
-			if (!result.canceled) {
-				const imageURI = result.assets[0].uri;
-				const response = await fetch(imageURI);
-				const blob = await response.blob();
-			}
-		} else Alert.alert('Image library permission required');
+			if (!result.canceled)
+				await uploadAndSendImage(result.assets[0].uri);
+		} else Alert.alert("Permissions haven't been granted.");
+	};
+
+	// Function to take a photo using the device's camera
+	const takePhoto = async () => {
+		let permissions = await ImagePicker.requestCameraPermissionsAsync();
+		if (permissions?.granted) {
+			let result = await ImagePicker.launchCameraAsync();
+			if (!result.canceled)
+				await uploadAndSendImage(result.assets[0].uri);
+		} else Alert.alert("Permissions haven't been granted.");
 	};
 
 	return (
-		<TouchableOpacity style={[styles.container]} onPress={onActionPress}>
+		<TouchableOpacity style={styles.container} onPress={onActionPress}>
 			<View style={[styles.wrapper, wrapperStyle]}>
 				<Text style={[styles.iconText, iconTextStyle]}>+</Text>
 			</View>

@@ -53,6 +53,20 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
 		} else Alert.alert('Location permission required');
 	};
 
+	// pick image from library
+	const pickImage = async () => {
+		let permissions =
+			await ImagePicker.requestMediaLibraryPermissionsAsync();
+		if (permissions?.granted) {
+			let result = await ImagePicker.launchImageLibraryAsync();
+			if (!result.canceled) {
+				const imageURI = result.assets[0].uri;
+				const response = await fetch(imageURI);
+				const blob = await response.blob();
+			}
+		} else Alert.alert('Image library permission required');
+	};
+
 	return (
 		<TouchableOpacity style={[styles.container]} onPress={onActionPress}>
 			<View style={[styles.wrapper, wrapperStyle]}>

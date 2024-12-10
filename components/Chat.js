@@ -9,6 +9,7 @@ import {
 	query,
 } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomActions from './CustomActions';
 
 const Chat = ({ route, navigation, db, isConnected }) => {
 	const { name, color, userID: UserID } = route.params;
@@ -106,6 +107,11 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 		else return null;
 	};
 
+	// Function to render the custom actions
+	const renderCustomActions = (props) => {
+		return <CustomActions {...props} />;
+	};
+
 	return (
 		<View style={[styles.chatContainer, { backgroundColor: color }]}>
 			{/* Render the GiftedChat component */}
@@ -113,6 +119,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 				messages={messages}
 				renderBubble={renderBubble}
 				renderInputToolbar={renderInputToolbar}
+				renderActions={renderCustomActions}
 				onSend={(newMessages) => onSend(newMessages)}
 				user={{
 					_id: UserID,

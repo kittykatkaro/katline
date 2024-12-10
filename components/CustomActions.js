@@ -3,7 +3,6 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Timestamp } from 'firebase/firestore';
 
 const CustomActions = ({
 	wrapperStyle,

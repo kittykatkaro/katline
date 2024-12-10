@@ -1,9 +1,9 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 
-const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
+const CustomActions = ({ wrapperStyle, iconTextStyle, onSend }) => {
 	const actionSheet = useActionSheet();
 
 	// initialize and show the action sheet
@@ -35,6 +35,22 @@ const CustomActions = ({ wrapperStyle, iconTextStyle }) => {
 				}
 			}
 		);
+	};
+
+	// get location
+	const getLocation = async () => {
+		let permissions = await Location.requestForegroundPermissionsAsync();
+		if (permissions?.granted) {
+			const location = await Location.getCurrentPositionAsync({});
+			if (location) {
+				onSend({
+					location: {
+						latitude: location.coords.latitude,
+						longitude: location.coords.longitude,
+					},
+				});
+			} else Alert.alert('Error occured while getting location');
+		} else Alert.alert('Location permission required');
 	};
 
 	return (

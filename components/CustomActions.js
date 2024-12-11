@@ -4,7 +4,13 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage }) => {
+const CustomActions = ({
+	wrapperStyle,
+	iconTextStyle,
+	onSend,
+	storage,
+	userID,
+}) => {
 	const actionSheet = useActionSheet();
 
 	// initialize and show the action sheet
@@ -53,6 +59,12 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage }) => {
 				});
 			} else Alert.alert('Error occured while getting location');
 		} else Alert.alert('Location permission required');
+	};
+
+	const generateReference = (uri) => {
+		const timeStamp = new Date().getTime();
+		const imageName = uri.split('/').pop(); // Get the last part of the URI
+		return `${userID}-${timeStamp}-${imageName}`;
 	};
 
 	// Function to upload an image to Firebase Storage and send its URL

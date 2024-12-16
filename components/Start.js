@@ -6,8 +6,8 @@ import {
 	TouchableOpacity,
 	ImageBackground,
 	Alert,
+	TextInput
 } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 
 const Start = ({ navigation }) => {

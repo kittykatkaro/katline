@@ -10,6 +10,7 @@ const CustomActions = ({
 	onSend,
 	storage,
 	userID,
+	userName,
 }) => {
 	const actionSheet = useActionSheet();
 
@@ -51,12 +52,14 @@ const CustomActions = ({
 		if (permissions?.granted) {
 			const location = await Location.getCurrentPositionAsync({});
 			if (location) {
-				onSend({
+				onSend([{
+					user: { _id: userID, name: userName},
+					createdAt: new Date(),
 					location: {
 						latitude: location.coords.latitude,
 						longitude: location.coords.longitude,
 					},
-				});
+				}]);
 			} else Alert.alert('Error occured while getting location');
 		} else Alert.alert('Location permission required');
 	};
@@ -76,7 +79,11 @@ const CustomActions = ({
 		const blob = await response.blob();
 		uploadBytes(newUploadRef, blob).then(async (snapshot) => {
 			const imageURL = await getDownloadURL(snapshot.ref);
-			onSend({ image: imageURL });
+			onSend([{ 
+				user: { _id: userID, name: userName},
+				createdAt: new Date(),
+				image: imageURL 
+			}]);
 		});
 	};
 

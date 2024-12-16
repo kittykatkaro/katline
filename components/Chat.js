@@ -109,7 +109,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 
 	// Function to render the custom actions
 	const renderCustomActions = (props) => {
-		return <CustomActions onSend={onSend} storage={storage} {...props} />;
+		return <CustomActions onSend={onSend} userID={UserID} userName={name} storage={storage} {...props} />;
 	};
 
 	// Function to render the custom view
@@ -151,9 +151,13 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 					name: name,
 				}}
 			/>
-			{Platform.OS === 'android' ? (
-				<KeyboardAvoidingView behavior="height" />
-			) : null}
+			{/* Prevents keyboard from overlapping the input field */}
+			{Platform.OS === "ios" || Platform.OS === "android" ? (
+        		<KeyboardAvoidingView
+          			behavior={Platform.OS === "ios" ? "padding" : "height"} // Adjust for iOS and Android
+          			keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Adjust offset to prevent overlap
+        		/>
+      		) : null}
 		</View>
 	);
 };

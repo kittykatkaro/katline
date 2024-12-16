@@ -9,14 +9,15 @@ import {
 	query,
 } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomActions from './CustomActions';
+import MapView from 'react-native-maps';
 
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
 	const { name, color, userID: UserID } = route.params;
-
 	const [messages, setMessages] = useState([]);
 
 	// Function to send messages
-	const onSend = (newMessages) => {
+	const onSend = async (newMessages) => {
 		addDoc(collection(db, 'messages'), newMessages[0]);
 	};
 
@@ -49,7 +50,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 				let newMessages = [];
 				docSnapshots.forEach((doc) => {
 					newMessages.push({
-						id: doc.id,
+						_id: doc.id,
 						...doc.data(),
 						createdAt: new Date(doc.data().createdAt.toMillis()),
 					});
@@ -106,6 +107,36 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 		else return null;
 	};
 
+	// Function to render the custom actions
+	const renderCustomActions = (props) => {
+		return <CustomActions onSend={onSend} userID={UserID} userName={name} storage={storage} {...props} />;
+	};
+
+	// Function to render the custom view
+	const renderCustomView = (props) => {
+		const { currentMessage } = props;
+		console.log("--->", currentMessage)
+		if (currentMessage.location) {
+			return (
+				<MapView
+					style={{
+						width: 150,
+						height: 100,
+						borderRadius: 13,
+						margin: 3,
+					}}
+					region={{
+						latitude: currentMessage.location.latitude,
+						longitude: currentMessage.location.longitude,
+						latitudeDelta: 0.0922,
+						longitudeDelta: 0.0421,
+					}}
+				/>
+			);
+		}
+		return null;
+	};
+
 	return (
 		<View style={[styles.chatContainer, { backgroundColor: color }]}>
 			{/* Render the GiftedChat component */}
@@ -113,15 +144,21 @@ const Chat = ({ route, navigation, db, isConnected }) => {
 				messages={messages}
 				renderBubble={renderBubble}
 				renderInputToolbar={renderInputToolbar}
+				renderActions={renderCustomActions}
+				renderCustomView={renderCustomView}
 				onSend={(newMessages) => onSend(newMessages)}
 				user={{
 					_id: UserID,
 					name: name,
 				}}
 			/>
-			{Platform.OS === 'android' ? (
-				<KeyboardAvoidingView behavior="height" />
-			) : null}
+			{/* Prevents keyboard from overlapping the input field */}
+			{Platform.OS === "ios" || Platform.OS === "android" ? (
+        		<KeyboardAvoidingView
+          			behavior={Platform.OS === "ios" ? "padding" : "height"} // Adjust for iOS and Android
+          			keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0} // Adjust offset to prevent overlap
+        		/>
+      		) : null}
 		</View>
 	);
 };

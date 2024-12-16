@@ -50,7 +50,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 				let newMessages = [];
 				docSnapshots.forEach((doc) => {
 					newMessages.push({
-						id: doc.id,
+						_id: doc.id,
 						...doc.data(),
 						createdAt: new Date(doc.data().createdAt.toMillis()),
 					});
@@ -115,6 +115,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 	// Function to render the custom view
 	const renderCustomView = (props) => {
 		const { currentMessage } = props;
+		console.log("--->", currentMessage)
 		if (currentMessage.location) {
 			return (
 				<MapView

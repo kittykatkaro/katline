@@ -9,7 +9,8 @@
 2. [Technologies Used](#technologies-used)
 3. [Setup and Installation](#setup-and-installation)
 4. [Running the App](#running-the-app)
-5. [Project Screens](#project-screens)
+5. [Firebase Configuration](#firebase-configuration)
+6. [Project Screens](#project-screens)
 
 ---
 
@@ -60,6 +61,43 @@ Run the following command to install necessary libraries: `npm install`
 
    - [iOS: Expo Go on the App Store](https://apps.apple.com/us/app/expo-go/id982107779)
    - [Android: Expo Go on Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent)
+
+## Firebase Configuration
+
+1. Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
+2. Enable Firestore Database and Firebase Cloud Storage.
+3. Set up Anonymous Authentication in the Authentication tab.
+4. Copy your Firebase configuration object:
+   ```
+   {
+     apiKey: "YOUR_API_KEY",
+     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+     projectId: "YOUR_PROJECT_ID",
+     storageBucket: "YOUR_PROJECT_ID.appspot.com",
+     messagingSenderId: "YOUR_SENDER_ID",
+     appId: "YOUR_APP_ID"
+   }
+   ```
+
+5. Replace the placeholder credentials in `App.js`
+   ```
+   const App = () = {
+      const firebaseConfig = {
+   
+            // Your web app's Firebase configuration
+   
+         apiKey: "YOUR_API_KEY",
+         authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+         projectId: "YOUR_PROJECT_ID",
+         storageBucket: "YOUR_PROJECT_ID.appspot.com",
+         messagingSenderId: "YOUR_SENDER_ID",
+         appId: "YOUR_APP_ID"
+         };
+   
+            // Initialize Firebase
+   
+         firebase.initializeApp(firebaseConfig);
+   ```
 
 ## Running the App
 
